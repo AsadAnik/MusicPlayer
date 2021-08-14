@@ -1,46 +1,70 @@
 import React from 'react';
-import { Text, Dimensions } from 'react-native';
+import { SafeAreaView, FlatList } from 'react-native';
 import { AudioContext } from '../context/AudioProvider';
-import { RecyclerListView, LayoutProvider } from 'recyclerlistview';
+import AudioListItem from '../components/AudioListItem';
+import Screen from '../components/Screen';
+import OptionsModal from '../components/OptionsModal';
 
-class AudioList extends React.Component {
+
+// Component..
+class AudioList extends React.PureComponent {
+    // static of context instance..
     static contextType = AudioContext;
 
-    // LayoutProvider..
-    layoutProvider = new LayoutProvider((i) => 'audio', (type, dim) => {
-        switch (type) {
-            case 'audio':
-                dim.with = Dimensions.get('window').width;
-                dim.height = 70;
-                break;
+    // Constructor method..
+    constructor(props) {
+        super(props);
 
-            default:
-                dim.width = 0;
-                dim.height = 0;
-        }
-    });
+        this.state = {
+            optionsModalVisibility: false,
+        };
 
-    rowRenderer = (type, item) => {
-        return <Text>{item.filename}</Text>;
-    };
+        this.currentItem = {};
+    }
+
+    // to render audio list..
+    renderItem = ({ item }) => (
+        <AudioListItem
+            title={item.filename}
+            duration={item.duration}
+            onOptionPress={() => {
+                this.currentItem = item;
+                this.setState({...this.state, optionsModalVisibility: true});
+            }}
+        />
+    );
+
 
     // Render method..
     render() {
-        // console.log(this.context);
+        const listData = this.context.audioFiles;
+        // console.log(listData);
+
         return (
-            <AudioContext.Consumer>
-                {({ dataProvider }) => {
-                    return (
-                        <RecyclerListView
-                            style={{ flex: 1 }}
-                            contentContainerStyle={{ margin: 3 }}
-                            dataProvider={dataProvider}
-                            layoutProvider={this.layoutProvider}
-                            rowRenderer={this.rowRenderer}
-                        />
-                    );
-                }}
-            </AudioContext.Consumer>
+            <Screen>
+                <SafeAreaView style={{ flex: 1 }}>
+                    {/* FlatList */}
+                    <FlatList
+                        data={listData}
+                        renderItem={this.renderItem}
+                        keyExtractor={item => item.id}
+                    />
+
+                    {/* Modal View */}
+                    <OptionsModal 
+                        currentItem={this.currentItem}
+                        visibility={this.state.optionsModalVisibility} 
+                        onClose={() => {
+                            this.setState({
+                                ...this.state,
+                                optionsModalVisibility: false
+                            });
+                        }}
+                        onPlayPress={() => console.log('Playing Music!')}
+                        onPlayListPress={() => console.log('Opening PlayList!')}
+                    />
+                </SafeAreaView>
+            </Screen>
         );
     }
 }
