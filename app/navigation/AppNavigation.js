@@ -22,7 +22,7 @@ const AppNavigation = () => {
                     headerTitle: 'All Music',
                     headerStatusBarHeight: 10,
                 }}
-                
+
             />
 
             <Tab.Screen

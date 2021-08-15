@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import AppNavigation from './app/navigation/AppNavigation';
-import AudioProvider from './app/context/AudioProvider';
+import AudioProvider from './app/context/AudioProvider.js';
 
 export default function App() {
   return (
