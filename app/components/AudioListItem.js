@@ -1,12 +1,12 @@
-import React, {Component} from 'react';
-import { View, Text, Dimensions, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { Component } from 'react';
+import { View, Text, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
 import Color from '../misc/Color';
 import { styles } from '../misc/Styles';
 
 
 // Component..
-class AudioListItem extends Component{
+class AudioListItem extends Component {
     // Constructor..
     constructor(props) {
         super(props);
@@ -21,7 +21,7 @@ class AudioListItem extends Component{
 
     getThumbnailText = (filename) => filename[0];
 
-
+    // Convert time into human readable format..
     convertTime = (minutes) => {
         if (minutes) {
             const hrs = minutes / 60;
@@ -47,27 +47,28 @@ class AudioListItem extends Component{
 
 
     // render method..
-    render(){
-        const { title, duration, onOptionPress } = this.props;
+    render() {
+        const { title, duration, onOptionPress, onAudioPress } = this.props;
 
-
-        console.log('Rendered');
+        // console.log('Rendered');
 
         // Returning statement..
         return (
             <>
                 <View style={styles.container}>
-                    {/* Icon and Title side.. */}
-                    <View style={styles.leftContainer}>
-                        <View style={styles.thumbnail}>
-                            <Text style={styles.thumbnailText}>{this.getThumbnailText(title)}</Text>
-                        </View>
+                    <TouchableWithoutFeedback onPress={onAudioPress}>
+                        {/* Icon and Title side.. */}
+                        <View style={styles.leftContainer}>
+                            <View style={styles.thumbnail}>
+                                <Text style={styles.thumbnailText}>{this.getThumbnailText(title)}</Text>
+                            </View>
 
-                        <View style={styles.titleContainer}>
-                            <Text numberOfLines={1} style={styles.title}>{title}</Text>
-                            <Text style={styles.timeText}>{this.convertTime(duration)}</Text>
+                            <View style={styles.titleContainer}>
+                                <Text numberOfLines={1} style={styles.title}>{title}</Text>
+                                <Text style={styles.timeText}>{this.convertTime(duration)}</Text>
+                            </View>
                         </View>
-                    </View>
+                    </TouchableWithoutFeedback>
 
                     {/* Options Dot side.. */}
                     <View style={styles.rightContainer}>
@@ -76,10 +77,11 @@ class AudioListItem extends Component{
                                 name="dots-three-vertical"
                                 size={20}
                                 color={Color.FONT_MEDIUM}
-                                style={{padding: 10}}
+                                style={{ padding: 10 }}
                             />
                         </TouchableOpacity>
                     </View>
+
                 </View>
 
                 <View style={styles.separator} />

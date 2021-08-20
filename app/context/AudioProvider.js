@@ -1,6 +1,6 @@
 import React, {createContext, useEffect, useState} from "react";
 import * as MediaLibrary from 'expo-media-library';
-import {Alert, Text, View} from "react-native";
+import {Alert, Text, View, ActivityIndicator, StyleSheet} from "react-native";
 
 // Create Context..
 export const  AudioContext = createContext();
@@ -88,7 +88,7 @@ const AudioProvider = (props) => {
 
     // no audio load then it shows Loading...
     if (audioFiles.length === 0 && !permissionError) {
-        return <Text>Loading...</Text>;
+        return <ActivityIndicator style={styles.loading} size={'large'} color={'blue'} />;
 
     } else {
         // Otherwise finally AudioProvider..
@@ -99,5 +99,18 @@ const AudioProvider = (props) => {
         );
     }
 };
+
+
+// StyleSheet..
+const styles = StyleSheet.create({
+    loading: {
+        flex: 1,
+        position: 'absolute',
+        top: 50,
+        left: 50,
+        right: 50,
+        bottom: 50
+    }
+});
 
 export default AudioProvider;

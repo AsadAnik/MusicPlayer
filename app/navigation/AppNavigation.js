@@ -1,6 +1,6 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import AudioList from '../screens/AudioList';
+import AudioList from '../screens/AudioList.js';
 import Player from '../screens/Player';
 import PlayList from '../screens/PlayList';
 import { Ionicons, FontAwesome5, MaterialIcons } from '@expo/vector-icons';

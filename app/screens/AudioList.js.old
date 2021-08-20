@@ -1,73 +1,85 @@
-import React from 'react';
-import { SafeAreaView, FlatList } from 'react-native';
-import { AudioContext } from '../context/AudioProvider';
-import AudioListItem from '../components/AudioListItem';
+import React, {useContext, useState} from 'react';
+import { FlatList, SafeAreaView } from 'react-native';
+import { AudioContext } from '../context/AudioProvider.js';
 import Screen from '../components/Screen';
-import OptionsModal from '../components/OptionsModal';
+import OptionsModal from "../components/OptionsModal";
+import AudioListItem from "../components/AudioListItem.js";
+import { Audio } from 'expo-av';
+
+// component..
+const AudioList = () => {
+    // use context..
+    const tracks = useContext(AudioContext);
+    const { audioFiles } = tracks;
+
+    const [optionsModalVisibility, setOptionsModalVisibility] = useState(false);
+    const [currentItem, setCurrentItem] = useState({});
+    const [audioOptions, setAudioOptions] = useState({
+        playbackObj: null,
+        soundObj: {},
+        currentAudio: null
+    });
 
 
-// Component..
-class AudioList extends React.PureComponent {
-    // static of context instance..
-    static contextType = AudioContext;
+    // handle when press into audio track once..
+    const handleAudioPress = async(audio) => {
+       // playing audio for the first time..
+       if (!audioOptions.soundObj.isPlaying){
+           const playbackObj = new Audio.Sound();
+           // to play the media..
+           const status = await playbackObj.loadAsync({ uri: audio.uri }, { shouldPlay: true });
 
-    // Constructor method..
-    constructor(props) {
-        super(props);
+           return setAudioOptions({
+               playbackObj: playbackObj,
+               soundObj: status,
+               currentAudio: audio
+           });
+       }
 
-        this.state = {
-            optionsModalVisibility: false,
-        };
-
-        this.currentItem = {};
-    }
+       // can Pause when song is playing..
+        if (audioOptions.soundObj.isPlaying){
+            return console.log('The Song is already playing!');
+        }
+    };
 
     // to render audio list..
-    renderItem = ({ item }) => (
+    const renderItem = ({ item }) => (
         <AudioListItem
             title={item.filename}
             duration={item.duration}
+            onAudioPress={() => handleAudioPress(item)}
             onOptionPress={() => {
-                this.currentItem = item;
-                this.setState({...this.state, optionsModalVisibility: true});
+                setCurrentItem(item);
+                setOptionsModalVisibility(true);
             }}
         />
     );
 
+    // return statement..
+    return (
+        <Screen>
+            <SafeAreaView style={{ flex: 1 }}>
+                {/* FlatList */}
+                <FlatList
+                    data={audioFiles}
+                    initialNumToRender={7}
+                    renderItem={renderItem}
+                    keyExtractor={item => item.id}
+                />
 
-    // Render method..
-    render() {
-        const listData = this.context.audioFiles;
-        // console.log(listData);
-
-        return (
-            <Screen>
-                <SafeAreaView style={{ flex: 1 }}>
-                    {/* FlatList */}
-                    <FlatList
-                        data={listData}
-                        renderItem={this.renderItem}
-                        keyExtractor={item => item.id}
-                    />
-
-                    {/* Modal View */}
-                    <OptionsModal
-                        currentItem={this.currentItem}
-                        visibility={this.state.optionsModalVisibility}
-                        onClose={() => {
-                            this.setState({
-                                ...this.state,
-                                optionsModalVisibility: false
-                            });
-                        }}
-                        onPlayPress={() => console.log('Playing Music!')}
-                        onPlayListPress={() => console.log('Opening PlayList!')}
-                    />
-                </SafeAreaView>
-            </Screen>
-        );
-    }
-}
-
+                {/* Modal View */}
+                <OptionsModal
+                    currentItem={currentItem}
+                    visibility={optionsModalVisibility}
+                    onClose={() => {
+                        setOptionsModalVisibility(false)
+                    }}
+                    onPlayPress={() => console.log('Playing Music!')}
+                    onPlayListPress={() => console.log('Opening PlayList!')}
+                />
+            </SafeAreaView>
+        </Screen>
+    );
+};
 
 export default AudioList;
