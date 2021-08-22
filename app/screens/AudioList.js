@@ -5,7 +5,7 @@ import AudioListItem from '../components/AudioListItem';
 import Screen from '../components/Screen';
 import OptionsModal from '../components/OptionsModal';
 import { Audio } from 'expo-av';
-import { play, pause, resume } from '../misc/AudioControllers';
+import { play, pause, resume, playNext } from '../misc/AudioControllers';
 
 // Component..
 class AudioList extends React.PureComponent {
@@ -16,60 +16,76 @@ class AudioList extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        this.state = {
-            optionsModalVisibility: false,
-            playbackObj: null,
-            soundObj: null,
-            currentAudio: {}
-        };
-
+        this.state = { optionsModalVisibility: false };
         this.currentItem = {};
     }
 
     handleAudioPress = async(audio) => {
+        // data from context..
+        const { playbackObj, soundObj, currentAudio } = this.context.audioListData;
+        const { audioFiles } = this.context;
+        const { updateState } = this.context;
+
         // play music first time..
-        if (this.state.soundObj === null){
+        if (soundObj === null){
             console.log('Pressed to Play!');
             const playbackObj = new Audio.Sound();
             const status = await play(playbackObj, audio.uri);
+            const index = audioFiles.indexOf(audio);
 
-            return this.setState({
-                ...this.state,
+            return updateState(this.context.audioListData, {
                 playbackObj,
                 soundObj: status,
-                currentAudio: audio
+                currentAudio: audio,
+                isPlaying: true,
+                currentIndex: index
             });
         }
 
         // pause music..
-        if (this.state.soundObj.isPlaying && this.state.soundObj.isLoaded && this.state.soundObj.shouldPlay){
+        if (soundObj.isPlaying && soundObj.isLoaded && soundObj.shouldPlay && currentAudio.id === audio.id){
             console.log('Pressed to Pause!');
-            const status = await pause(this.state.playbackObj);
+            const status = await pause(playbackObj);
 
-            return this.setState({
-                ...this.state,
-                soundObj: status
+            return updateState(this.context.audioListData, {
+                soundObj: status,
+                isPlaying: false
             });
         }
 
         // resume music..
-        if (!this.state.soundObj.isPlaying && !this.state.soundObj.shouldPlay && this.state.currentAudio.id === audio.id){
+        if (!soundObj.isPlaying && !soundObj.shouldPlay && currentAudio.id === audio.id){
             console.log('Pressed to Resume!');
-            const status = await resume(this.state.playbackObj);
+            const status = await resume(playbackObj);
 
-            return this.setState({
-                ...this.state,
-                soundObj: status
+            return updateState(this.context.audioListData, {
+                soundObj: status,
+                isPlaying: true
             });
         }
+
+        // select & play next music..
+        if (soundObj.isLoaded && currentAudio.id !== audio.id){
+            const status = await playNext(playbackObj, audio.uri);
+            const index = audioFiles.indexOf(audio);
+
+            return updateState(this.context.audioListData, {
+                soundObj: status,
+                currentAudio: audio,
+                isPlaying: true,
+                currentIndex: index
+            });
+        }
+
     }
 
 
     // to render audio list..
-    renderItem = ({ item }) => (
+    renderItem = ({ item, index }) => (
         <AudioListItem
             title={item.filename}
             duration={item.duration}
+            activeListItem={this.context.audioListData.currentIndex === index}
             onAudioPress={() => this.handleAudioPress(item)}
             onOptionPress={() => {
                 this.currentItem = item;

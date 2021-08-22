@@ -3,10 +3,15 @@ import { View, Text, TouchableOpacity, TouchableWithoutFeedback } from 'react-na
 import { Entypo } from '@expo/vector-icons';
 import Color from '../misc/Color';
 import { styles } from '../misc/Styles';
+import { AudioContext } from '../context/AudioProvider';
 
 
 // Component..
 class AudioListItem extends Component {
+
+    // context for testing one thing..
+    static contextType = AudioContext;
+
     // Constructor..
     constructor(props) {
         super(props);
@@ -45,10 +50,17 @@ class AudioListItem extends Component {
         }
     }
 
+    // rendering lists music icons..
+    renderPlayPauseIcon = (isPlaying) => {
+        if (!isPlaying) return ( <Entypo name="controller-play" size={24} color={Color.ACTIVE_FONT} /> );
+        return ( <Entypo name="controller-paus" size={24} color={Color.ACTIVE_FONT} /> );
+    };
+
 
     // render method..
     render() {
-        const { title, duration, onOptionPress, onAudioPress } = this.props;
+        const { title, duration, onOptionPress, onAudioPress, activeListItem } = this.props;
+        const { isPlaying } = this.context.audioListData;
 
         // console.log('Rendered');
 
@@ -59,12 +71,14 @@ class AudioListItem extends Component {
                     <TouchableWithoutFeedback onPress={onAudioPress}>
                         {/* Icon and Title side.. */}
                         <View style={styles.leftContainer}>
-                            <View style={styles.thumbnail}>
-                                <Text style={styles.thumbnailText}>{this.getThumbnailText(title)}</Text>
+                            <View style={[styles.thumbnail, { backgroundColor: !activeListItem ? Color.FONT_LIGHT : Color.ACTIVE_BG }]}>
+                                <Text style={styles.thumbnailText}>
+                                    { activeListItem ? this.renderPlayPauseIcon(isPlaying) : this.getThumbnailText(title) }
+                                </Text>
                             </View>
 
                             <View style={styles.titleContainer}>
-                                <Text numberOfLines={1} style={styles.title}>{title}</Text>
+                                <Text numberOfLines={1} style={[styles.title, { color: !activeListItem ? Color.FONT : 'purple' }]}>{title}</Text>
                                 <Text style={styles.timeText}>{this.convertTime(duration)}</Text>
                             </View>
                         </View>

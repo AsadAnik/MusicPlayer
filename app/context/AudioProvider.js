@@ -10,11 +10,23 @@ const AudioProvider = (props) => {
     // Hooks..
     const [permissionError, setPermissionError] = useState(false);
     const [audioFiles, setAudioFiles] = useState([]);
+    const [audioListData, setAudioListData] = useState({
+        playbackObj: null,
+        soundObj: null,
+        currentAudio: {},
+        isPlaying: false,
+        currentIndex: null
+    });
 
     // lifecycle hook..
     useEffect(() => {
         getPermission();
     }, []);
+
+    // Update the State data..
+    const updateState = (prevState, nextState) => {
+        setAudioListData({...prevState, ...nextState});
+    };
 
 
     // Permission Alert Method..
@@ -93,7 +105,7 @@ const AudioProvider = (props) => {
     } else {
         // Otherwise finally AudioProvider..
         return (
-            <AudioContext.Provider value={{ audioFiles }}>
+            <AudioContext.Provider value={{ audioFiles, audioListData, updateState }}>
                 {props.children}
             </AudioContext.Provider>
         );
