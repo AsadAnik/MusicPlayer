@@ -15,8 +15,11 @@ const AudioProvider = (props) => {
         soundObj: null,
         currentAudio: {},
         isPlaying: false,
-        currentIndex: null
+        currentIndex: null,
+        playbackPosition: null,
+        playbackDuration: null,
     });
+    const [totalAudioCount, setTotalAudioCount] = useState(0);
 
     // lifecycle hook..
     useEffect(() => {
@@ -49,6 +52,7 @@ const AudioProvider = (props) => {
 
         // console.log(media.assets);
         setAudioFiles(media.assets);
+        setTotalAudioCount(media.totalCount);
     };
 
     // Get Permission method..
@@ -105,7 +109,7 @@ const AudioProvider = (props) => {
     } else {
         // Otherwise finally AudioProvider..
         return (
-            <AudioContext.Provider value={{ audioFiles, audioListData, updateState }}>
+            <AudioContext.Provider value={{ audioFiles, audioListData, updateState, totalAudioCount }}>
                 {props.children}
             </AudioContext.Provider>
         );

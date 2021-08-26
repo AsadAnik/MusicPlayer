@@ -20,6 +20,21 @@ class AudioList extends React.PureComponent {
         this.currentItem = {};
     }
 
+    // update the seekbar positions and durations..
+    // onPlaybackStatusUpdate = (playbackStatus) => {
+    //     console.log(playbackStatus);
+    //     if (playbackStatus.isLoaded && playbackStatus.isPlaying) {
+    //         console.log('I am inside OnPlaybackStatusUpdate');
+    //         this.context.updateState(this.context.audioListData, {
+    //             plabackPosition: playbackStatus.positionMillis,
+    //             playbackDuration: playbackStatus.durationMills
+    //         });
+    //     }
+
+    //     console.log('I am inside but not logically onPlaybackStatusUpdate');
+    // };
+
+    // Handle audio List..
     handleAudioPress = async(audio) => {
         // data from context..
         const { playbackObj, soundObj, currentAudio } = this.context.audioListData;
@@ -40,6 +55,8 @@ class AudioList extends React.PureComponent {
                 isPlaying: true,
                 currentIndex: index
             });
+
+            // return playbackObj.setOnPlaybackStatusUpdate(this.onPlaybackStatusUpdate);
         }
 
         // pause music..

@@ -1505,6 +1505,13 @@
     sudo-prompt "^9.0.0"
     wcwidth "^1.0.1"
 
+"@react-native-community/slider@^4.1.2":
+  version "4.1.2"
+  resolved "https://registry.yarnpkg.com/@react-native-community/slider/-/slider-4.1.2.tgz#456c53722ec61eeb8970227ccdc3493191568771"
+  integrity sha512-sQ5CHMcHaBuQIdL6FbvGEsHpPJXtkz4MC5b5KfOOTeirh7XGKtWu7QZqxTFQVWjwh9+ULxm1AIKJ7GevWBAPZw==
+  dependencies:
+    flow-bin "0.113.0"
+
 "@react-navigation/bottom-tabs@^6.0.4":
   version "6.0.4"
   resolved "https://registry.yarnpkg.com/@react-navigation/bottom-tabs/-/bottom-tabs-6.0.4.tgz#2bbcfa3a4351fdaeb1725fee89644bd48f73ad91"
@@ -3025,6 +3032,11 @@ find-up@~5.0.0:
   dependencies:
     locate-path "^6.0.0"
     path-exists "^4.0.0"
+
+flow-bin@0.113.0:
+  version "0.113.0"
+  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.113.0.tgz#6457d250dbc6f71ca51e75f00a96d23cde5d987a"
+  integrity sha512-76uE2LGNe50wm+Jup8Np4FBcMbyy5V2iE+K25PPIYLaEMGHrL1jnQfP9L0hTzA5oh2ZJlexRLMlaPqIYIKH9nw==
 
 fontfaceobserver@^2.1.0:
   version "2.1.0"
