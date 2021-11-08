@@ -15,15 +15,15 @@ const Player = () => {
     const context = useContext(AudioContext);
     const { currentIndex, currentAudio, isPlaying, playbackPosition, playbackDuration } = context.audioListData;
 
-    console.log('From Player: ', playbackPosition, playbackDuration);
+    // console.log('From Player: ', playbackPosition, playbackDuration);
 
     // calculate and manages seekbar..
-    // const calculateSeekBar = () => {
-    //     if (playbackPosition !== null && playbackDuration !== null){
-    //         return playbackPosition / playbackDuration;
-    //     }
-    //     return 0;
-    // };
+    const calculateSeekBar = () => {
+        if (playbackPosition !== null && playbackDuration !== null){
+            return playbackPosition / playbackDuration;
+        }
+        return 0;
+    };
 
     // returning statement..
     return (

@@ -21,18 +21,43 @@ class AudioList extends React.PureComponent {
     }
 
     // update the seekbar positions and durations..
-    // onPlaybackStatusUpdate = (playbackStatus) => {
-    //     console.log(playbackStatus);
-    //     if (playbackStatus.isLoaded && playbackStatus.isPlaying) {
-    //         console.log('I am inside OnPlaybackStatusUpdate');
-    //         this.context.updateState(this.context.audioListData, {
-    //             plabackPosition: playbackStatus.positionMillis,
-    //             playbackDuration: playbackStatus.durationMills
-    //         });
-    //     }
+    onPlaybackStatusUpdate = async(playbackStatus) => {
+        // console.log(playbackStatus);
+        if (playbackStatus.isLoaded && playbackStatus.isPlaying) {
+            return this.context.updateState(this.context.audioListData, {
+                playbackPosition: playbackStatus.positionMillis,
+                playbackDuration: playbackStatus.durationMillis,
+            });
+        }
 
-    //     console.log('I am inside but not logically onPlaybackStatusUpdate');
-    // };
+        if (playbackStatus.didJustFinish){
+            const nextAudioIndex = this.context.currentIndex + 1;
+
+            if (nextAudioIndex >= this.context.totalAudioCount) {
+                this.context.audioListData.playbackObj.unloadAsync();
+
+                return this.context.updateState(this.context.audioListData, {
+                    soundObj: null,
+                    currentAudio: this.context.audioFiles[0],
+                    isPlaying: false,
+                    currentIndex: 0,
+                    plabackPosition: null,
+                    playbackDuration: null
+                });
+            }
+
+            const audio = this.context.audioFiles[nextAudioIndex];
+            const status = await playNext(this.context.audioListData.playbackObj, audio.uri);
+
+            return this.context.updateState(this.context.audioListData, {
+                soundObj: status,
+                currentAudio: audio,
+                isPlaying: true,
+                currentIndex: nextAudioIndex
+            });
+        }
+    }
+
 
     // Handle audio List..
     handleAudioPress = async(audio) => {
@@ -48,6 +73,8 @@ class AudioList extends React.PureComponent {
             const status = await play(playbackObj, audio.uri);
             const index = audioFiles.indexOf(audio);
 
+            playbackObj.setOnPlaybackStatusUpdate(this.onPlaybackStatusUpdate);
+
             return updateState(this.context.audioListData, {
                 playbackObj,
                 soundObj: status,
@@ -55,8 +82,6 @@ class AudioList extends React.PureComponent {
                 isPlaying: true,
                 currentIndex: index
             });
-
-            // return playbackObj.setOnPlaybackStatusUpdate(this.onPlaybackStatusUpdate);
         }
 
         // pause music..
