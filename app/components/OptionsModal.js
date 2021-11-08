@@ -4,9 +4,29 @@ import Color from '../misc/Color';
 
 
 // Modal Component..
-const OptionsModal = ({ visibility, onClose, currentItem, onPlayPress, onPlayListPress }) => {
+const OptionsModal = ({ visibility, onClose, currentItem, isPlaying, currentPlayingItem, onPlayPress, onPlayListPress }) => {
     const { filename } = currentItem;
 
+    // make sure current item is playing or not and showing play or pause button..
+    const showPlayPause = (isPlaying, itemId, currentItemId) => {
+        if (!isPlaying && itemId !== currentItemId) {
+            return 'Play';
+        }
+
+        if (isPlaying && currentItemId !== itemId) {
+            return 'Play';
+        }
+
+        if (isPlaying && currentItemId === itemId) {
+            return 'Pause';
+        }
+
+        if (!isPlaying && currentItemId === itemId) {
+            return 'Play';
+        }
+    };
+
+    // returning statement..
     return (
         <>
             {/* Hide the statusBar */}
@@ -19,7 +39,7 @@ const OptionsModal = ({ visibility, onClose, currentItem, onPlayPress, onPlayLis
 
                     <View style={styles.optionContainer}>
                         <TouchableWithoutFeedback onPress={onPlayPress}>
-                            <Text style={styles.option}>Play</Text>
+                            <Text style={styles.option}>{showPlayPause(isPlaying, currentItem.id, currentPlayingItem.id)}</Text>
                         </TouchableWithoutFeedback>
 
                         <TouchableWithoutFeedback onPress={onPlayListPress}>

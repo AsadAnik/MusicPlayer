@@ -22,7 +22,18 @@ class AudioList extends React.PureComponent {
 
     // update the seekbar positions and durations..
     onPlaybackStatusUpdate = async(playbackStatus) => {
+
+        // console.log('Playback Status here ----- method');
+        // console.log(playbackStatus.positionMillis);
+
         // console.log(playbackStatus);
+
+        /** 
+         * Returned because of the performance is become so low when out this return here.
+         * after return the code's executes with so low and rendering low UI become so slow..
+         * **/
+        return false;
+
         if (playbackStatus.isLoaded && playbackStatus.isPlaying) {
             return this.context.updateState(this.context.audioListData, {
                 playbackPosition: playbackStatus.positionMillis,
@@ -56,6 +67,8 @@ class AudioList extends React.PureComponent {
                 currentIndex: nextAudioIndex
             });
         }
+
+        return 0;
     }
 
 
@@ -73,15 +86,15 @@ class AudioList extends React.PureComponent {
             const status = await play(playbackObj, audio.uri);
             const index = audioFiles.indexOf(audio);
 
-            playbackObj.setOnPlaybackStatusUpdate(this.onPlaybackStatusUpdate);
-
-            return updateState(this.context.audioListData, {
+            updateState(this.context.audioListData, {
                 playbackObj,
                 soundObj: status,
                 currentAudio: audio,
                 isPlaying: true,
                 currentIndex: index
             });
+
+            return playbackObj.setOnPlaybackStatusUpdate(this.onPlaybackStatusUpdate);
         }
 
         // pause music..
@@ -142,6 +155,8 @@ class AudioList extends React.PureComponent {
         const listData = this.context.audioFiles;
         // console.log(listData);
 
+        // console.log('Rendered!');
+
         return (
             <Screen>
                 <SafeAreaView style={{ flex: 1 }}>
@@ -156,13 +171,15 @@ class AudioList extends React.PureComponent {
                     <OptionsModal
                         currentItem={this.currentItem}
                         visibility={this.state.optionsModalVisibility}
+                        isPlaying={this.context.audioListData.isPlaying}
+                        currentPlayingItem={this.context.audioListData.currentAudio}
                         onClose={() => {
                             this.setState({
                                 ...this.state,
                                 optionsModalVisibility: false
                             });
                         }}
-                        onPlayPress={() => console.log('Playing Music!')}
+                        onPlayPress={() => this.handleAudioPress(this.currentItem)}
                         onPlayListPress={() => console.log('Opening PlayList!')}
                     />
                 </SafeAreaView>
